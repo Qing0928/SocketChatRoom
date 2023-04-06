@@ -17,7 +17,7 @@ class RecordDB(
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val sql = "CREATE TABLE IF NOT EXISTS record(time TEXT, sendby TEXT DEFAULT '', content TEXT)"
+        val sql = "CREATE TABLE IF NOT EXISTS record(time INTEGER, sendby TEXT DEFAULT '', content TEXT)"
         db?.execSQL(sql)
     }
 
@@ -41,6 +41,20 @@ class RecordDB(
         }
     }
 
+    fun checkMsg(time:Int):Boolean{
+        val db = this.readableDatabase
+        val sql = "SELECT `time` FROM record WHERE `time`='$time'"
+        val cursor = db.rawQuery(sql, null)
+        return try {
+            cursor.count == 0
+        }catch (e:Exception){
+            e.printStackTrace()
+            false
+        }finally {
+            cursor.close()
+        }
+    }
+
     fun loadMsg():List<Msg>{
         val db = this.readableDatabase
         val sql = "SELECT `time` FROM record ORDER BY `time` ASC"
@@ -51,7 +65,7 @@ class RecordDB(
                 do {
                     chatRecord.add(
                         Msg(
-                            cursor.getString(cursor.getColumnIndex("time")),
+                            cursor.getInt(cursor.getColumnIndex("time")),
                             cursor.getString(cursor.getColumnIndex("snedby")),
                             cursor.getString(cursor.getColumnIndex("content"))
                         )
@@ -67,15 +81,15 @@ class RecordDB(
         }
     }
 
-    fun getLatest():String{
+    fun getLatest():Int{
         val db = this.readableDatabase
         val sql = "SELECT `time` FROM record ORDER BY `time` DESC LIMIT 1"
         val cursor = db.rawQuery(sql, null)
-        var latest = ""
+        var latest = 0
         return try {
             if (cursor.moveToFirst()){
                 do {
-                    latest = cursor.getString(cursor.getColumnIndex("time"))
+                    latest = cursor.getInt(cursor.getColumnIndex("time"))
                 }while (cursor.moveToNext())
             }
             latest
