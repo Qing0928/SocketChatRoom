@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FFB3E5FC"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StartActivity">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/chat"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <EditText
+        android:id="@+id/editTextNickName"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="64dp"
+        android:background="@drawable/background_round_corner_white"
+        android:outlineSpotShadowColor="#00FFFFFF"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="15dp"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:hint="請輸入暱稱"
+        android:textColorHint="#FFCFD8DC"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        android:autofillHints=""
+        android:inputType="text"
+        tools:ignore="HardcodedText,LabelFor" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonNext"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="65dp"
+        android:backgroundTint="#FF00B0FF"
+        android:outlineSpotShadowColor="#00FFFFFF"
+        android:outlineAmbientShadowColor="#00FFFFFF"
+        app:cornerRadius="30dp"
+        android:text="下一步"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@id/editTextNickName"
+        app:layout_constraintStart_toStartOf="@id/editTextNickName"
+        app:layout_constraintEnd_toEndOf="@id/editTextNickName"
+        tools:ignore="HardcodedText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

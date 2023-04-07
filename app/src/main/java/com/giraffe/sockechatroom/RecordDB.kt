@@ -57,18 +57,17 @@ class RecordDB(
 
     fun loadMsg():List<Msg>{
         val db = this.readableDatabase
-        val sql = "SELECT `time` FROM record ORDER BY `time` ASC"
+        val sql = "SELECT * FROM `record` ORDER BY `time` ASC"
         val cursor = db.rawQuery(sql, null)
+        val chatRecord = ArrayList<Msg>()
         try {
             return if (cursor.moveToFirst()){
-                val chatRecord = mutableListOf<Msg>()
                 do {
+                    val time = cursor.getInt(cursor.getColumnIndex("time"))
+                    val sendby = cursor.getString(cursor.getColumnIndex("sendby"))
+                    val content = cursor.getString(cursor.getColumnIndex("content"))
                     chatRecord.add(
-                        Msg(
-                            cursor.getInt(cursor.getColumnIndex("time")),
-                            cursor.getString(cursor.getColumnIndex("snedby")),
-                            cursor.getString(cursor.getColumnIndex("content"))
-                        )
+                        Msg(time, sendby, content)
                     )
                 }while (cursor.moveToNext())
                 chatRecord
