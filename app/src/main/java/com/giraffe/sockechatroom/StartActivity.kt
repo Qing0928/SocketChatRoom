@@ -34,7 +34,7 @@ class StartActivity : AppCompatActivity() {
         else{
             Thread{
                 try {
-                    val client = Socket("192.168.67.123", 8051)
+                    val client = Socket("34.168.67.230", 8051)
                     client.keepAlive = true
                     val output = PrintWriter(client.getOutputStream(), true)
                     val input = BufferedReader(InputStreamReader(client.getInputStream()))

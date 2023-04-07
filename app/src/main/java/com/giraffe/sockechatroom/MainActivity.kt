@@ -41,10 +41,9 @@ class MainActivity : AppCompatActivity() {
         //發訊息Thread
         Thread {
             try {
-                val client = Socket("192.168.67.123", 8051)
+                val client = Socket("34.168.67.230", 8051)
                 client.keepAlive = true
                 val output = PrintWriter(client.getOutputStream(), true)
-                val input = BufferedReader(InputStreamReader(client.getInputStream()))
                 //發送按鈕
                 binding.buttonSendMsg.setOnClickListener {
                     Thread{
@@ -71,7 +70,7 @@ class MainActivity : AppCompatActivity() {
 
         //更新訊息Thread，500ms刷新一次
         Thread{
-            val updateClient = Socket("192.168.67.123", 8051)
+            val updateClient = Socket("34.168.67.230", 8051)
             updateClient.keepAlive = true
             val updateOutput = PrintWriter(updateClient.getOutputStream(), true)
             val updateInput = BufferedReader(InputStreamReader(updateClient.getInputStream()))
