@@ -68,8 +68,13 @@ class StartActivity : AppCompatActivity() {
                     }
                 }
                 else{
-                    editor.putString("nick_name", nickName).apply()
-                    startActivity(intent)
+                    if (db.loadMsg().isEmpty()){
+                        Toast.makeText(this, "等待中", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        editor.putString("nick_name", nickName).apply()
+                        startActivity(intent)
+                    }
                 }
             }catch (e:Exception){
                 e.printStackTrace()

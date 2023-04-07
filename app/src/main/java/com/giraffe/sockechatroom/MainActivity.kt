@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.recycler.layoutManager = layoutManager
 
+        //val record = db.loadMsg()
+
         val recyclerAdapter = RecyclerAdapter(db.loadMsg() as MutableList<Msg>)
         binding.recycler.adapter = recyclerAdapter
         binding.recycler.scrollToPosition(recyclerAdapter.itemCount -1 )
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
                 val client = Socket("34.168.67.230", 8051)
                 client.keepAlive = true
                 val output = PrintWriter(client.getOutputStream(), true)
+                val input = BufferedReader(InputStreamReader(client.getInputStream()))
                 //發送按鈕
                 binding.buttonSendMsg.setOnClickListener {
                     Thread{
@@ -70,40 +73,44 @@ class MainActivity : AppCompatActivity() {
 
         //更新訊息Thread，500ms刷新一次
         Thread{
-            val updateClient = Socket("34.168.67.230", 8051)
-            updateClient.keepAlive = true
-            val updateOutput = PrintWriter(updateClient.getOutputStream(), true)
-            val updateInput = BufferedReader(InputStreamReader(updateClient.getInputStream()))
-            Timer().schedule(object :TimerTask(){
-                override fun run() {
-                    try {
-                        val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
-                        updateOutput.println("latest,$now")
-                        if (updateInput.ready()){
-                            val receiveMsg = JSONArray(updateInput.readLine())
-                            for (i in 0 until receiveMsg.length()){
-                                val msg = JSONObject(receiveMsg[i].toString())
-                                val time = msg.getInt("time")
-                                val sendby = msg.getString("sendby")
-                                val content = msg.getString("content")
-                                val recordMsg = Msg(time, sendby, content)
-                                val check = db.checkMsg(time)
-                                if (check){
-                                    db.newMsg(recordMsg)
-                                    runOnUiThread {
-                                        val record = db.loadMsg().toMutableList()
-                                        recyclerAdapter.setRecord(record)
-                                        binding.recycler.scrollToPosition(recyclerAdapter.itemCount -1)
+            try{
+                val updateClient = Socket("34.168.67.230", 8051)
+                updateClient.keepAlive = true
+                val updateOutput = PrintWriter(updateClient.getOutputStream(), true)
+                val updateInput = BufferedReader(InputStreamReader(updateClient.getInputStream()))
+                Timer().schedule(object :TimerTask(){
+                    override fun run() {
+                        try {
+                            val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
+                            updateOutput.println("latest,$now")
+                            if (updateInput.ready()){
+                                val receiveMsg = JSONArray(updateInput.readLine())
+                                for (i in 0 until receiveMsg.length()){
+                                    val msg = JSONObject(receiveMsg[i].toString())
+                                    val time = msg.getInt("time")
+                                    val sendby = msg.getString("sendby")
+                                    val content = msg.getString("content")
+                                    val recordMsg = Msg(time, sendby, content)
+                                    val check = db.checkMsg(time)
+                                    if (check){
+                                        db.newMsg(recordMsg)
+                                        runOnUiThread {
+                                            val record = db.loadMsg().toMutableList()
+                                            recyclerAdapter.setRecord(record)
+                                            binding.recycler.scrollToPosition(recyclerAdapter.itemCount -1)
+                                        }
                                     }
                                 }
                             }
+                        }catch (e:Exception){
+                            e.printStackTrace()
                         }
-
-                    }catch (e:Exception){
-                        e.printStackTrace()
                     }
-                }
-            }, 0, 500)
+                }, 0, 500)
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+
         }.start()
 
         //按下返回執行的動作
